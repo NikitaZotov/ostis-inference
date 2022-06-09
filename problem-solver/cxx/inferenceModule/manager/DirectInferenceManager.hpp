@@ -15,6 +15,7 @@
 #include "generator/SolutionTreeGenerator.hpp"
 #include "manager/TemplateManager.hpp"
 #include "searcher/TemplateSearcher.hpp"
+#include "classifier/FormulaClassifier.hpp"
 
 
 using namespace std;
@@ -33,14 +34,22 @@ public:
         const ScAddr & ruleSet,
         const ScAddr & argumentSet);
 
-  ~DirectInferenceManager();
+  ScAddr applyInference(
+        const ScAddr & ruleSet,
+        const ScAddr & inputStructure,
+        const ScAddr & outputStructure,
+        const ScAddr & targetStatement);
+~DirectInferenceManager();
 
 private:
   vector<queue<ScAddr>> createRulesQueuesListByPriority(ScAddr const & rulesSet);
 
   queue<ScAddr> createQueue(ScAddr const & set);
 
-  bool useRule(ScAddr const & rule, vector<ScAddr> const & argumentList);
+  void clearSatisfiabilityInformation(ScAddr const & rule, ScAddr const & model);
+  void addSatisfiabilityInformation(ScAddr const & rule, ScAddr const & model, bool isSatisfiable);
+
+  bool useRule(ScAddr const & rule, vector<ScAddr> /*const*/ & argumentList);
 
   bool isTargetAchieved(ScAddr const & target, vector<ScAddr> const & argumentList);
 
@@ -50,5 +59,9 @@ private:
   TemplateManager * templateManager;
   TemplateSearcher * templateSearcher;
   SolutionTreeGenerator * solutionTreeManager;
+  FormulaClassifier * formulaClassifier;
+  ScAddr inputStructure;
+  ScAddr outputStructure;
+  ScAddr targetStatement;
 };
 }
